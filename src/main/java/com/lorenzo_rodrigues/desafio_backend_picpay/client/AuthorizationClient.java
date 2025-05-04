@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public interface AuthorizationClient {
 
     @GetMapping
-    AuthorizationResponse isAuthorize();
+    AuthorizationResponse isAuthorized();
 
     }
 
