@@ -17,6 +17,7 @@ public class TransferController {
 
     @PostMapping
     public ResponseEntity<Transfer> createTransfer (TransferRequest request){
-        transferService.transfer(request);
+        transferService.createTransfer(request);
+        return null;
     }
 }
