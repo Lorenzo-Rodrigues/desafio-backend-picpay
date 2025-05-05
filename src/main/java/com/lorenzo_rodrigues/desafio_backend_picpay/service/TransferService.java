@@ -30,9 +30,14 @@ public class TransferService {
         validate(sender,receiver,transferRequest.money());
         authorizationService.authorize();
 
-        // atualização carteira
+        sender.debit(transferRequest.money());
+        receiver.credit(transferRequest.money());
 
-        // salvar transação
+        var transfer = new Transfer(sender,receiver,transferRequest.money());
+
+        walletRepository.save(sender);
+        walletRepository.save(receiver);
+        var newTransfer = transferRepository.save(transfer);
 
         // enviar notificacao
 
