@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Transfer {
 
     @Id
@@ -29,5 +31,10 @@ public class Transfer {
 
     private BigDecimal moneyValue;
 
+    @CreationTimestamp
     private LocalDateTime timestamp;
+
+    public Transfer(Wallet sender, Wallet receiver, BigDecimal money) {
+
+    }
 }
