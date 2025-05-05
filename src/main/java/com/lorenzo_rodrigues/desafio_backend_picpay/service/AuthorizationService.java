@@ -12,11 +12,10 @@ public class AuthorizationService {
         this.authorizationClient = authorizationClient;
     }
 
-    public boolean authorize(){
+    public void authorize(){
         AuthorizationResponse authorization= authorizationClient.isAuthorized();
         if (!authorization.data().authorization() || authorization.status().equals("fail")){
             throw new RuntimeException("not authorized");
         }
-        return true;
     }
 }
