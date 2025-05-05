@@ -33,4 +33,11 @@ public class Wallet {
     @Enumerated(EnumType.STRING)
     private WalletType walletType;
 
+    public void debit(BigDecimal money) {
+        this.balance = balance.subtract(money);
+    }
+    public void credit(BigDecimal money) {
+        this.balance = balance.add(money);
+    }
+
 }
