@@ -8,22 +8,27 @@ import com.lorenzo_rodrigues.desafio_backend_picpay.repository.TransferRepositor
 import com.lorenzo_rodrigues.desafio_backend_picpay.repository.WalletRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class TransferService {
     private final WalletRepository walletRepository;
     private final TransferRepository transferRepository;
+    private final AuthorizationService authorizationService;
 
-    public TransferService(WalletRepository walletRepository, TransferRepository transferRepository) {
+    public TransferService(WalletRepository walletRepository, TransferRepository transferRepository, AuthorizationService authorizationService) {
         this.walletRepository = walletRepository;
         this.transferRepository = transferRepository;
+        this.authorizationService = authorizationService;
     }
 
 
-    public Transfer transfer (TransferRequest transferRequest){
-        var sender = walletRepository.findById(transferRequest.payer());
-        var receiver = walletRepository.findById(transferRequest.payee());
+    public Transfer createTransfer (TransferRequest transferRequest){
+        var sender = findWalletByIdOrThrowException(transferRequest.payer());
+        var receiver = findWalletByIdOrThrowException(transferRequest.payee());
 
-        validate(transferRequest);
+        validate(sender,receiver,transferRequest.money());
+        authorizationService.authorize();
 
         // atualização carteira
 
@@ -34,9 +39,7 @@ public class TransferService {
         return null;
     }
 
-    public void validate(TransferRequest transferRequest){
-        var sender = findWalletByIdOrThrowException(transferRequest.payer());
-        var receiver = findWalletByIdOrThrowException(transferRequest.payee());
+    public void validate(Wallet sender, Wallet receiver, BigDecimal money){
 
         if(sender.getId().equals(receiver.getId())){
             throw new RuntimeException("Cannot make transfer to yourself");
@@ -44,7 +47,7 @@ public class TransferService {
         if (sender.getWalletType() == WalletType.MERCHANT){
             throw new RuntimeException("WalletType merchant not allowed to transfer");
         }
-        if (sender.getBalance().compareTo(transferRequest.money())<0){
+        if (sender.getBalance().compareTo(money) <0){
             throw new RuntimeException("Insufficient balance");
         }
 
