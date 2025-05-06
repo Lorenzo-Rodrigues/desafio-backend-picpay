@@ -4,6 +4,10 @@ import com.lorenzo_rodrigues.desafio_backend_picpay.controller.dto.TransferReque
 import com.lorenzo_rodrigues.desafio_backend_picpay.entity.Transfer;
 import com.lorenzo_rodrigues.desafio_backend_picpay.entity.Wallet;
 import com.lorenzo_rodrigues.desafio_backend_picpay.entity.WalletType;
+import com.lorenzo_rodrigues.desafio_backend_picpay.exception.InsufficientBalanceException;
+import com.lorenzo_rodrigues.desafio_backend_picpay.exception.TransferNotAllowedForWalletType;
+import com.lorenzo_rodrigues.desafio_backend_picpay.exception.TransferNotAllowedForYourself;
+import com.lorenzo_rodrigues.desafio_backend_picpay.exception.WalletNotFoundException;
 import com.lorenzo_rodrigues.desafio_backend_picpay.repository.TransferRepository;
 import com.lorenzo_rodrigues.desafio_backend_picpay.repository.WalletRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -52,13 +56,13 @@ public class TransferService {
     public void validate(Wallet sender, Wallet receiver, BigDecimal money){
         log.info("validating transaction...");
         if(sender.getId().equals(receiver.getId())){
-            throw new RuntimeException("Cannot make transfer to yourself");
+            throw new TransferNotAllowedForYourself();
         }
         if (sender.getWalletType() == WalletType.MERCHANT){
-            throw new RuntimeException("WalletType merchant not allowed to transfer");
+            throw new TransferNotAllowedForWalletType();
         }
         if (sender.getBalance().compareTo(money) <0){
-            throw new RuntimeException("Insufficient balance");
+            throw new InsufficientBalanceException();
         }
 
     }
@@ -66,6 +70,6 @@ public class TransferService {
     public Wallet findWalletByIdOrThrowException(Long id){
         log.info("fetching wallet: {} ...", id);
         return walletRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("wallet not found with id: " + id));
+                .orElseThrow(() -> new WalletNotFoundException(id));
     }
 }
