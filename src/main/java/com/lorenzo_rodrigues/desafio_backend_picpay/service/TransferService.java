@@ -6,11 +6,13 @@ import com.lorenzo_rodrigues.desafio_backend_picpay.entity.Wallet;
 import com.lorenzo_rodrigues.desafio_backend_picpay.entity.WalletType;
 import com.lorenzo_rodrigues.desafio_backend_picpay.repository.TransferRepository;
 import com.lorenzo_rodrigues.desafio_backend_picpay.repository.WalletRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 @Service
+@Slf4j
 public class TransferService {
     private final WalletRepository walletRepository;
     private final TransferRepository transferRepository;
@@ -35,8 +37,11 @@ public class TransferService {
 
         var transfer = new Transfer(sender,receiver,transferRequest.money());
 
+        log.info("updating both wallets balance...");
         walletRepository.save(sender);
         walletRepository.save(receiver);
+
+        log.info("saving transaction {} ...",transfer);
         var newTransfer = transferRepository.save(transfer);
 
         // enviar notificacao
@@ -45,7 +50,7 @@ public class TransferService {
     }
 
     public void validate(Wallet sender, Wallet receiver, BigDecimal money){
-
+        log.info("validating transaction...");
         if(sender.getId().equals(receiver.getId())){
             throw new RuntimeException("Cannot make transfer to yourself");
         }
@@ -56,10 +61,10 @@ public class TransferService {
             throw new RuntimeException("Insufficient balance");
         }
 
-        // authorization service
     }
 
     public Wallet findWalletByIdOrThrowException(Long id){
+        log.info("fetching wallet: {} ...", id);
         return walletRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("wallet not found with id: " + id));
     }

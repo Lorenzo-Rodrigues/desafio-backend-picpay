@@ -2,9 +2,11 @@ package com.lorenzo_rodrigues.desafio_backend_picpay.service;
 
 import com.lorenzo_rodrigues.desafio_backend_picpay.client.AuthorizationClient;
 import com.lorenzo_rodrigues.desafio_backend_picpay.client.dto.AuthorizationResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class AuthorizationService {
     private final AuthorizationClient authorizationClient;
 
@@ -13,6 +15,7 @@ public class AuthorizationService {
     }
 
     public void authorize(){
+        log.info("authorizing transaction...");
         AuthorizationResponse authorization= authorizationClient.isAuthorized();
         if (!authorization.data().authorization() || authorization.status().equals("fail")){
             throw new RuntimeException("not authorized");
