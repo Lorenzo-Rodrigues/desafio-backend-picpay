@@ -56,15 +56,21 @@ public class TransferService {
     public void validate(Wallet sender, Wallet receiver, BigDecimal money){
         log.info("validating transaction...");
         if(sender.getId().equals(receiver.getId())){
+            log.info("validation failed, payer id {} and payee id {} are the same",
+                    sender,receiver);
             throw new TransferNotAllowedForYourself();
         }
         if (sender.getWalletType() == WalletType.MERCHANT){
+            log.info("validation failed, this wallet: {} is merchant, therefore can not transfer. ",
+                    sender);
             throw new TransferNotAllowedForWalletType();
         }
         if (sender.getBalance().compareTo(money) <0){
+            log.info("validation failed, transfer value {} is greater than user {} balance",
+                    money, sender);
             throw new InsufficientBalanceException();
         }
-
+        log.info("completed validation, everything ok");
     }
 
     public Wallet findWalletByIdOrThrowException(Long id){
