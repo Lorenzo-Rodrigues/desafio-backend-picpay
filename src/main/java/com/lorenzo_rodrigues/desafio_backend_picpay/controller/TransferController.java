@@ -5,9 +5,12 @@ import com.lorenzo_rodrigues.desafio_backend_picpay.entity.Transfer;
 import com.lorenzo_rodrigues.desafio_backend_picpay.service.TransferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/transfer")
 public class TransferController {
     private final TransferService transferService;
 
@@ -16,7 +19,7 @@ public class TransferController {
     }
 
     @PostMapping
-    public ResponseEntity<Transfer> createTransfer (TransferRequest request){
+    public ResponseEntity<Transfer> createTransfer (@RequestBody TransferRequest request){
 
         var transfer = transferService.createTransfer(request);
 
