@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -21,11 +22,13 @@ public class TransferService {
     private final WalletRepository walletRepository;
     private final TransferRepository transferRepository;
     private final AuthorizationService authorizationService;
+    private final NotificationService notificationService;
 
-    public TransferService(WalletRepository walletRepository, TransferRepository transferRepository, AuthorizationService authorizationService) {
+    public TransferService(WalletRepository walletRepository, TransferRepository transferRepository, AuthorizationService authorizationService, NotificationService notificationService) {
         this.walletRepository = walletRepository;
         this.transferRepository = transferRepository;
         this.authorizationService = authorizationService;
+        this.notificationService = notificationService;
     }
 
 
@@ -48,9 +51,9 @@ public class TransferService {
         log.info("saving transaction {} ...",transfer);
         var newTransfer = transferRepository.save(transfer);
 
-        // enviar notificacao
+        CompletableFuture.runAsync(()-> notificationService.sendNotification(newTransfer));
 
-        return null;
+        return newTransfer;
     }
 
     public void validate(Wallet sender, Wallet receiver, BigDecimal money){
