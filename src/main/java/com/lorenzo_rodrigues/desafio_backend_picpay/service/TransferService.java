@@ -10,6 +10,7 @@ import com.lorenzo_rodrigues.desafio_backend_picpay.exception.TransferNotAllowed
 import com.lorenzo_rodrigues.desafio_backend_picpay.exception.WalletNotFoundException;
 import com.lorenzo_rodrigues.desafio_backend_picpay.repository.TransferRepository;
 import com.lorenzo_rodrigues.desafio_backend_picpay.repository.WalletRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +32,9 @@ public class TransferService {
         this.notificationService = notificationService;
     }
 
-
+    @Transactional
     public Transfer createTransfer (TransferRequest transferRequest){
+
         var sender = findWalletByIdOrThrowException(transferRequest.payer());
         var receiver = findWalletByIdOrThrowException(transferRequest.payee());
 
