@@ -15,11 +15,16 @@ public class AuthorizationService {
         this.authorizationClient = authorizationClient;
     }
 
-    public void authorize(){
+    public void authorize() {
         log.info("authorizing transaction...");
-        AuthorizationResponse authorization= authorizationClient.isAuthorized();
-        if (!authorization.data().authorization() || authorization.status().equals("fail")){
+        try {
+            authorizationClient.isAuthorized();
+
+        } catch(Exception e){
+            log.info("authorization failed");
             throw new TransferNotAuthorizedException();
         }
+        log.info("authorization successful");
     }
 }
+
