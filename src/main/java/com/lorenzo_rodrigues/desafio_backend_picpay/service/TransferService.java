@@ -35,8 +35,10 @@ public class TransferService {
     @Transactional
     public Transfer createTransfer (TransferRequest transferRequest){
 
-        var sender = findWalletByIdOrThrowException(transferRequest.payer());
-        var receiver = findWalletByIdOrThrowException(transferRequest.payee());
+        var sender = walletRepository.findById(transferRequest.payer())
+                .orElseThrow(() -> new WalletNotFoundException(transferRequest.payer()));
+        var receiver = walletRepository.findById(transferRequest.payee())
+                .orElseThrow(() -> new WalletNotFoundException(transferRequest.payee()));
 
         validate(sender,receiver,transferRequest.money());
         authorizationService.authorize();
