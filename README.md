@@ -8,6 +8,7 @@ ou na interface do Swagger. De qualquer forma os testes unitários também estã
 * Spring(BOOT, WEB, DATA, CLOUD(OpenFeign))
 * H2 DataBase
 * Padrão MVC
+* Logs(LSF4J)
 * ControllerAdvice & Problem Details
 * Testes Unitários(Junit, Mockito)
 * Documentação (OpenAPI)
